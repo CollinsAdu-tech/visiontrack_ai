@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      # Persist downloaded YOLO weights and processed media across
+      # container restarts/rebuilds -- without this, every fresh
+      # container re-downloads yolo26n.pt on first request.
+      - backend_models:/app/models
+      - backend_uploads:/app/uploads
+      - backend_outputs:/app/outputs
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_models:
+  backend_uploads:
+  backend_outputs:

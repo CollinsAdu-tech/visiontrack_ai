@@ -1,0 +1,27 @@
+{
+  "images": [
+    {
+      "path": "../sample_data/images/single_person.jpg",
+      "ground_truth": [
+        { "class_name": "person", "box": [120, 80, 300, 500] }
+      ]
+    },
+    {
+      "path": "../sample_data/images/crowded.jpg",
+      "ground_truth": [
+        { "class_name": "person", "box": [50, 60, 150, 300] },
+        { "class_name": "person", "box": [200, 70, 310, 320] },
+        { "class_name": "person", "box": [340, 90, 430, 330] }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "path": "../sample_data/videos/line_crossing.mp4",
+      "ground_truth": {
+        "entries": 10,
+        "exits": 7
+      }
+    }
+  ]
+}

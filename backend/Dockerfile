@@ -13,6 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
+# CPU-only PyTorch first: the default PyPI wheel bundles CUDA (~2 GB+),
+# which is useless on a CPU host like Render and makes builds slow and
+# memory-hungry. requirements.txt then sees torch as already satisfied.
+RUN pip install --no-cache-dir torch torchvision \
+    --index-url https://download.pytorch.org/whl/cpu
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -36,4 +42,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 # Single worker by default: the in-memory ResultsStore (see
 # app/services/results_store.py) is only correct with exactly one
 # worker process -- see docs/deployment.md before raising --workers.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Hosts like Render inject $PORT; fall back to 8000 for local/compose use.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

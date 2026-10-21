@@ -15,10 +15,21 @@ async function parseErrorMessage(response) {
   return `Request failed (${response.status}).`;
 }
 
+// Empty by default: relative paths work with the Vite dev proxy and the
+// nginx/docker-compose setup. For a split deployment (frontend on
+// Cloudflare Pages, backend on Render) set VITE_API_BASE_URL at build time
+// to the backend's full URL, e.g. https://visiontrack-api.onrender.com
+const BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+
+/** Turn a backend-relative path like /outputs/x.mp4 into a loadable URL. */
+export function mediaUrl(path) {
+  return path && path.startsWith("/") ? `${BASE}${path}` : path;
+}
+
 async function request(path, options) {
   let response;
   try {
-    response = await fetch(path, options);
+    response = await fetch(`${BASE}${path}`, options);
   } catch {
     throw new Error("Could not reach the server. Is the backend running?");
   }

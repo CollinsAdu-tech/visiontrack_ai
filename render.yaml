@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: visiontrack-api
+    runtime: docker
+    plan: starter # YOLO + PyTorch need more RAM than the free tier's 512 MB reliably gives
+    dockerContext: backend
+    dockerfilePath: backend/Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: CORS_ALLOW_ORIGINS
+        sync: false # set in dashboard as a JSON list, e.g. ["https://visiontrack-ai.pages.dev"]
+      - key: MODEL_NAME
+        value: models/yolo26n.pt
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "100"

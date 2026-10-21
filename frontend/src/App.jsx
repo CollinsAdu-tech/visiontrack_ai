@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import ResultsPanel from "./components/ResultsPanel";
 import UploadPanel from "./components/UploadPanel";
 import { useVisionTrack } from "./hooks/useVisionTrack";
+import { mediaUrl } from "./services/api";
 
 export default function App() {
   const {
@@ -36,7 +37,7 @@ export default function App() {
   }, [file]);
 
   const showingResult = status === "completed" && result;
-  const viewportSrc = showingResult ? result.output_url : previewUrl;
+  const viewportSrc = showingResult ? mediaUrl(result.output_url) : previewUrl;
 
   const handleModeChange = (nextMode) => {
     setMode(nextMode);
